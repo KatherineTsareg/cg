@@ -15,13 +15,15 @@ namespace
 const char SKY_TEX_PATH[] = "res/sky.bmp";
 
 const glm::vec4 BLACK = {0, 0, 0, 1};
+const glm::vec4 WHITE = { 0.8f, 0.8f, 0.8f, 0 };
 const float MATERIAL_SHININESS = 30.f;
 const glm::vec4 FADED_WHITE_RGBA = {0.3f, 0.3f, 0.3f, 1.f};
+const glm::vec4 LIGHT_YELLOW_RGBA = { 1.f, 1.f, 0.5f, 1.f };
 const glm::vec3 SUNLIGHT_DIRECTION = {-1.f, 0.2f, 0.7f};
 const unsigned SPHERE_PRECISION = 100;
-const float SPHERE_RADIUS = VERTEX_TILE_SIZE * STEP / 2.f;
+const float SPHERE_RADIUS = VERTEX_TILE_SIZE * STEP / 1.8f;
 const float CAMERA_INITIAL_ROTATION = 0;
-const float CAMERA_INITIAL_DISTANCE = 600.f;
+const float CAMERA_INITIAL_DISTANCE = 900.f;
 
 
 void SetupOpenGLState()
@@ -51,6 +53,7 @@ glm::mat4 MakeProjectionMatrix(const glm::ivec2 &size)
 
 	return glm::perspective(fieldOfView, aspect, zNear, zFar);
 }
+
 }
 
 
@@ -58,7 +61,7 @@ CWindow::CWindow()
     : m_camera(CAMERA_INITIAL_ROTATION, CAMERA_INITIAL_DISTANCE)
     , m_sunlight(GL_LIGHT0)
 {
-    SetBackgroundColor(BLACK);
+    SetBackgroundColor(WHITE);
 
     const glm::vec4 WHITE_RGBA = {1, 1, 1, 1};
     m_material.SetAmbient(WHITE_RGBA);
@@ -93,7 +96,7 @@ void CWindow::OnUpdateWindow(float deltaSeconds)
 void CWindow::OnDrawWindow(const glm::ivec2 &size)
 {
     SetupView(size);
-
+	SetupFog();
     m_sunlight.Setup();
     m_material.Setup();
 	m_pLandscape->Draw();
@@ -117,7 +120,7 @@ void CWindow::SetupView(const glm::ivec2 &size)
     const float fieldOfView = glm::radians(70.f);
     const float aspect = float(size.x) / float(size.y);
     const float zNear = 0.01f;
-    const float zFar = 50000;
+    const float zFar = 40000.f;
     const glm::mat4 proj = glm::perspective(fieldOfView, aspect, zNear, zFar);
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(proj));
@@ -127,9 +130,30 @@ void CWindow::SetupView(const glm::ivec2 &size)
 void CWindow::OnKeyDown(const SDL_KeyboardEvent &event)
 {
     m_camera.OnKeyDown(event);
+
+	if (event.keysym.sym == SDLK_f)
+	{
+		m_isFogEnabled = !m_isFogEnabled;
+	}
 }
 
 void CWindow::OnKeyUp(const SDL_KeyboardEvent &event)
 {
     m_camera.OnKeyUp(event);
+}
+
+void CWindow::SetupFog()
+{
+	if (m_isFogEnabled)
+	{
+		const float density = 0.002f;
+		glEnable(GL_FOG);
+		glFogi(GL_FOG_MODE, GL_EXP2);
+		glFogfv(GL_FOG_COLOR, glm::value_ptr(WHITE));
+		glFogf(GL_FOG_DENSITY, density);
+	}
+	else
+	{
+		glDisable(GL_FOG);
+	}
 }

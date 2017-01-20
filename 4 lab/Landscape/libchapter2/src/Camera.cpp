@@ -10,10 +10,10 @@ using glm::quat;
 
 namespace
 {
-	const float ROTATION_SPEED_RADIANS = 0.1f;
-	const float LINEAR_MOVE_SPEED = 20.f;
-	const float MIN_DISTANCE = 0.f;
-	const float MAX_DISTANCE = 600.f;
+	const float ROTATION_SPEED_RADIANS = 0.5f;
+	const float LINEAR_MOVE_SPEED = 55.f;
+	const float MIN_DISTANCE = 1.f;
+	const float MAX_DISTANCE = 500.f;
 
 	bool ShouldTrackKeyPressed(const SDL_Keysym &key)
 	{
@@ -93,8 +93,11 @@ CCamera::CCamera(float rotationRadians, float distance)
 
 void CCamera::Update(float deltaSec)
 {
+	if (m_keysPressed.count(SDLK_UP) || m_keysPressed.count(SDLK_DOWN))
+	{
+		m_distance += deltaSec * GetLinearMoveSpeed(m_keysPressed);
+	}
 	m_rotationRadians += deltaSec * GetRotationSpeedRadians(m_keysPressed);
-	m_distance += deltaSec * GetLinearMoveSpeed(m_keysPressed);
 	m_distance = glm::clamp(m_distance, MIN_DISTANCE, MAX_DISTANCE);
 }
 

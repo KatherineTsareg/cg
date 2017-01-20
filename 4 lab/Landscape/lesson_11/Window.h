@@ -24,11 +24,13 @@ protected:
 
 private:
     void SetupView(const glm::ivec2 &size);
+	void SetupFog();
 
     CPhongModelMaterial m_material;
 	CTexture2DUniquePtr m_pSkyTexture;
     CCamera m_camera;
     CDirectedLightSource m_sunlight;
+	bool m_isFogEnabled = true;
 
 	std::unique_ptr<CLandscape> m_pLandscape;
 	std::unique_ptr<CIdentitySphere> m_pSphere;

@@ -6,8 +6,8 @@
 namespace
 {
 	const char HIGHT_MAP_PATH[] = "res/height.raw";
-	const float HEIGHT_SCALE = 2.f;
-	const float HEIGHT_OFFSET = HEIGHT_SCALE * 120;
+	const float HEIGHT_SCALE = 1.2f;
+	const float HEIGHT_OFFSET = HEIGHT_SCALE * 150.f ;
 	const char EARTH_TEX_PATH[] = "res/gc.bmp";
 }
 using namespace std;
@@ -49,6 +49,6 @@ void CLandscape::LoadMap()
 	}
 	
 	inputFile.close();
-
+	
 	m_map.Load(glm::fvec2(-VERTEX_TILE_SIZE * STEP / 2.f, -VERTEX_TILE_SIZE * STEP / 2.f), glm::ivec2(VERTEX_TILE_SIZE, VERTEX_TILE_SIZE), &heightMap[0]);
 }
